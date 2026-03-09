@@ -1,0 +1,114 @@
+<!doctype html>
+<!--
+  Copyright (c) 2026 William Kao. All Rights Reserved.
+
+  The visual design, UI layout, and specific graphical elements of this software
+  are proprietary intellectual property. Unauthorized reproduction is prohibited.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EN01 Bachelor of Engineering (Honours) Mechanical 2026</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <!-- SVG Sprite injected dynamically via JS, or we can use <use href="assets/icons/sprite.svg#icon-name"> -->
+
+    <div id="root" class="min-h-screen bg-[#FFFFFF] text-[#1C1C1C] font-sans relative flex overflow-hidden">
+
+      <!-- Container for Info Box -->
+      <div id="info-box-container"></div>
+
+      <!-- MAIN CONTENT AREA -->
+      <div class="flex-1 flex flex-col h-screen overflow-y-auto hide-scroll tech-tree-bg transition-all duration-300 ml-0">
+
+        <!-- Header / Controls -->
+        <div class="p-3 pb-2 flex flex-col md:flex-row justify-between print:justify-start items-center gap-3 bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-[#DBDBDB] shadow-sm">
+          <div>
+            <h1 class="text-xl md:text-2xl font-bold text-[#012A4C]">
+              Mechanical
+            </h1>
+            <p class="text-xs md:text-sm text-[#616161]">
+              Course units & Prerequisites
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-4">
+            <!-- Print Button -->
+            <button
+              id="print-btn"
+              class="print-hide-controls flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg shadow-sm transition-colors"
+              title="Print A4"
+            >
+              <svg width="16" height="16"><use href="assets/icons/sprite.svg#icon-printer"></use></svg>
+            </button>
+
+            <!-- Master Capacity & Refresh -->
+            <div class="print-hide-controls flex bg-[#F5F5F5] rounded-lg p-1 border border-[#DBDBDB] items-center">
+              <span class="px-2 md:px-3 text-xs md:text-sm text-[#616161] font-semibold flex items-center">
+                Unit/Semester:
+              </span>
+              <div class="flex gap-1" id="capacity-controls">
+                <!-- Buttons will be injected here -->
+              </div>
+              <div class="w-px h-5 bg-[#DBDBDB] mx-2"></div>
+              <button
+                id="refresh-btn"
+                class="flex items-center gap-1.5 px-2 md:px-3 py-1.5 text-xs font-bold text-white bg-green-600 hover:bg-green-700 rounded-md transition-colors shadow-sm"
+                title="Auto-Sort Grid"
+              >
+                <svg class="w-3 h-3 md:w-4 md:h-4"><use href="assets/icons/sprite.svg#icon-refresh"></use></svg>
+                Refresh
+              </button>
+              <div class="w-px h-5 bg-[#DBDBDB] mx-2"></div>
+              <button
+                id="save-btn"
+                class="flex items-center gap-1.5 px-2 md:px-3 py-1.5 text-xs font-bold text-white bg-[#0066B9] hover:bg-[#012A4C] rounded-md transition-colors shadow-sm"
+                title="Save Layout to JSON"
+              >
+                <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                Save
+              </button>
+            </div>
+
+            <!-- Legend Header -->
+            <div id="legend-container" class="hidden print:flex lg:flex flex-wrap items-center gap-2 bg-[#F5F5F5] rounded-lg px-3 py-1.5 border border-[#DBDBDB] print:ml-4">
+              <!-- Legend items injected here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Copyright Watermark -->
+        <div class="fixed bottom-12 left-6 origin-bottom-left -rotate-90 text-[10px] text-gray-300 font-medium tracking-wider no-print z-0 pointer-events-none select-none">
+          William Kao
+        </div>
+
+        <!-- Tree Container -->
+        <div class="p-8 pb-32 print-pb-0 flex-1 relative print-scale">
+          <div
+            id="graph-container"
+            class="max-w-[1100px] mx-auto relative"
+          >
+            <!-- SVG Lines Layer -->
+            <svg
+              id="edges-layer"
+              class="absolute inset-0 pointer-events-none"
+              style="width: 100%; height: 100%; overflow: visible;"
+            >
+              <!-- Paths injected here -->
+            </svg>
+
+            <!-- Nodes Layout Layer -->
+            <div id="nodes-layer" class="relative flex flex-col gap-12 sm:gap-16">
+              <!-- Rows and nodes injected here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JS Modules will be injected here in Phase 2 -->
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>
