@@ -48,12 +48,15 @@ const renderControls = () => {
     const isSelected = rowCapacity === val;
     const btnClass = isSelected
       ? "bg-[#0066B9] text-white shadow-sm"
-      : "text-[#1C1C1C] hover:bg-[#E2E8F0]";
+      : "bg-transparent text-[#1C1C1C] hover:bg-[#E2E8F0]";
+
+    const tooltip = `${val} unit${val > 1 ? 's' : ''}/semester`;
 
     html += `
       <button
         data-action="set-capacity"
         data-value="${val}"
+        title="${tooltip}"
         class="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center text-xs md:text-sm font-bold rounded-md transition-colors ${btnClass}"
       >
         ${val}
@@ -71,13 +74,16 @@ const renderLegend = () => {
   const { nodeTypes } = appState.get();
   if (Object.keys(nodeTypes).length === 0) return;
 
-  let html = `<span class="text-[10px] md:text-xs font-bold text-[#616161] uppercase tracking-wider mr-1">Unit:</span>`;
+  // Match the spacing (p-1), gap, and height of the unit/sem toolbar
+  container.className = 'hidden print:flex lg:flex flex-wrap items-center gap-2 bg-[#F5F5F5] rounded-lg p-1 border border-[#DBDBDB] print:ml-4 h-6 md:h-8';
+
+  let html = '';
 
   for (const [key, val] of Object.entries(nodeTypes)) {
     html += `
-      <div class="flex items-center gap-1">
-        <div class="w-2.5 h-2.5 rounded" style="background-color: ${val.bg}"></div>
-        <span class="text-[10px] md:text-xs text-[#616161] font-medium">${val.label}</span>
+      <div class="flex items-center gap-1.5 px-0.5">
+        <div class="w-3.5 h-3.5 rounded" style="background-color: ${val.bg}"></div>
+        <span class="text-xs md:text-sm text-[#616161] font-medium leading-none mt-0.5">${val.label}</span>
       </div>
     `;
   }
@@ -156,7 +162,7 @@ const renderNodes = () => {
     let unlockedCP = 0;
     let totalCP = 0;
     rowNodes.forEach(n => {
-      const cp = n.id === "WIL" || n.title === "EGB499" ? 0 : 12;
+      const cp = n.cp !== undefined ? n.cp : 12;
       totalCP += cp;
       if (completed.has(n.id)) unlockedCP += cp;
     });
@@ -166,7 +172,7 @@ const renderNodes = () => {
        const rNodes = allGridRows[r] || [];
        rNodes.forEach(n => {
           if (completed.has(n.id)) {
-            accCP += (n.id === "WIL" || n.title === "EGB499" ? 0 : 12);
+            accCP += (n.cp !== undefined ? n.cp : 12);
           }
        });
     }
@@ -322,7 +328,7 @@ const renderNodes = () => {
 
       node.avail.forEach(s => {
         if (s === rowSem) return;
-        const canMove = MathLogic.isMoveValid(node.id, s, nodes, edges);
+        const canMove = MathLogic.isMoveValid(node.id, s, nodes, edges, rowPreferences, rowCapacity);
         const tabClass = canMove
           ? "bg-[#F8F9FA] text-[#616161] border-[#DBDBDB] hover:bg-[#E2E8F0] hover:text-[#012A4C] cursor-pointer"
           : "bg-[#E5E5E5] text-[#A0A0A0] border-[#E5E5E5] cursor-not-allowed opacity-60";
@@ -576,31 +582,11 @@ const renderInfoBox = () => {
   `;
 
   // Custom CP Requirements
-  if (infoUnitDetails.id === "EGH404") {
+  if (infoUnitDetails.cpReq !== undefined) {
     html += `
       <li class="mb-1 flex items-center gap-2 w-full text-left font-semibold text-[#0066B9]">
-        <span>144 Accumulated CP</span>
-        ${totalUnlockedCP >= 144
-          ? '<svg class="w-3.5 h-3.5 text-green-600 ml-auto"><use href="assets/icons/sprite.svg#icon-check"></use></svg>'
-          : '<svg class="w-3.5 h-3.5 text-red-500 ml-auto"><use href="assets/icons/sprite.svg#icon-cross"></use></svg>'}
-      </li>
-    `;
-  }
-  if (infoUnitDetails.id === "EGH490_1") {
-    html += `
-      <li class="mb-1 flex items-center gap-2 w-full text-left font-semibold text-[#0066B9]">
-        <span>240 Accumulated CP</span>
-        ${totalUnlockedCP >= 240
-          ? '<svg class="w-3.5 h-3.5 text-green-600 ml-auto"><use href="assets/icons/sprite.svg#icon-check"></use></svg>'
-          : '<svg class="w-3.5 h-3.5 text-red-500 ml-auto"><use href="assets/icons/sprite.svg#icon-cross"></use></svg>'}
-      </li>
-    `;
-  }
-  if (infoUnitDetails.id === "WIL") {
-    html += `
-      <li class="mb-1 flex items-center gap-2 w-full text-left font-semibold text-[#0066B9]">
-        <span>192 Accumulated CP</span>
-        ${totalUnlockedCP >= 192
+        <span>${infoUnitDetails.cpReq} Accumulated CP</span>
+        ${totalUnlockedCP >= infoUnitDetails.cpReq
           ? '<svg class="w-3.5 h-3.5 text-green-600 ml-auto"><use href="assets/icons/sprite.svg#icon-check"></use></svg>'
           : '<svg class="w-3.5 h-3.5 text-red-500 ml-auto"><use href="assets/icons/sprite.svg#icon-cross"></use></svg>'}
       </li>
@@ -609,7 +595,7 @@ const renderInfoBox = () => {
 
   const prereqs = edges.filter(e => e.to === infoUnitDetails.id);
 
-  if (prereqs.length === 0 && infoUnitDetails.id !== "EGH404" && infoUnitDetails.id !== "EGH490_1" && infoUnitDetails.id !== "WIL") {
+  if (prereqs.length === 0 && infoUnitDetails.cpReq === undefined) {
     html += `<li class="text-[#616161] italic">None or basic entry requirements.</li>`;
   } else if (!isPinned && prereqs.length > 0) {
     // Unpinned view: simple list

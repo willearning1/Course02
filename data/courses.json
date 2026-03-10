@@ -292,7 +292,8 @@
         2
       ],
       "desc": "Engineering research methods, literature review, and data visualization.",
-      "manualColIndex": 3
+      "manualColIndex": 3,
+      "cpReq": 144
     },
     {
       "id": "M3",
@@ -342,7 +343,8 @@
         2
       ],
       "desc": "Capstone unit involving independent research and project management.",
-      "manualColIndex": 3
+      "manualColIndex": 3,
+      "cpReq": 240
     },
     {
       "id": "M4",
@@ -359,7 +361,7 @@
     },
     {
       "id": "WIL",
-      "row": 10,
+      "row": 11,
       "title": "EGB499",
       "name": "Work Placement Experience",
       "type": "wil",
@@ -369,7 +371,9 @@
         3
       ],
       "desc": "Capstone professional practice unit. Report submission after 450 hours of placement.",
-      "manualColIndex": 1
+      "manualColIndex": 1,
+      "cp": 0,
+      "cpReq": 192
     },
     {
       "id": "EGH422",

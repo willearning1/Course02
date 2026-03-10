@@ -19,7 +19,10 @@ export class State {
       isFading: false,
       drawnEdges: [], // Calculated paths for rendering
       selectedPrereqs: [],
-      selectedUnlocks: []
+      selectedUnlocks: [],
+      refreshManualEdits: true,
+      refreshInputOutput: true,
+      refreshHorizontal: true
     };
 
     this.listeners = [];

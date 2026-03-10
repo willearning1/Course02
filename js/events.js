@@ -19,12 +19,38 @@ export const initEvents = () => {
     window.print();
   });
 
+  // Initialize Dropdown States
+  const { refreshManualEdits, refreshInputOutput, refreshHorizontal } = appState.get();
+  document.querySelectorAll('[data-action="toggle-refresh-opt"]').forEach(el => {
+    if (el.dataset.opt === 'refreshManualEdits') el.checked = refreshManualEdits;
+    if (el.dataset.opt === 'refreshInputOutput') el.checked = refreshInputOutput;
+    if (el.dataset.opt === 'refreshHorizontal') el.checked = refreshHorizontal;
+  });
+
   // Controls (Refresh)
   document.getElementById('refresh-btn')?.addEventListener('click', () => {
-    const { nodes, edges, rowPreferences, rowCapacity } = appState.get();
-    const newNodes = MathLogic.refreshLayout(nodes, edges, rowPreferences, rowCapacity);
+    const { nodes, edges, rowPreferences, rowCapacity, refreshManualEdits, refreshInputOutput, refreshHorizontal } = appState.get();
+    const newNodes = MathLogic.refreshLayout(nodes, edges, rowPreferences, rowCapacity, refreshManualEdits, refreshInputOutput, refreshHorizontal);
     appState.set({ nodes: newNodes });
   });
+
+  // Dropdown Toggle
+  const dropdownBtn = document.getElementById('refresh-dropdown-btn');
+  const dropdown = document.getElementById('refresh-dropdown');
+
+  if (dropdownBtn && dropdown) {
+    dropdownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdown.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!dropdown.contains(e.target)) {
+        dropdown.classList.add('hidden');
+      }
+    });
+  }
 
   // Controls (Export)
   document.getElementById('export-btn')?.addEventListener('click', async () => {
@@ -444,6 +470,12 @@ const handleChanges = (e) => {
     return;
   }
 
+  if (target.dataset.action === 'toggle-refresh-opt') {
+    const opt = target.dataset.opt;
+    appState.set({ [opt]: target.checked });
+    return;
+  }
+
   if (target.dataset.action === 'change-row-pref') {
     const rowIdx = parseInt(target.dataset.row, 10);
     const val = parseInt(target.value, 10);
@@ -622,13 +654,28 @@ const moveNode = (nodeId, targetSemester) => {
     if (pNode && pNode.row < minPostreqRow) minPostreqRow = pNode.row;
   });
 
-  let targetRow = -1;
+  let validRows = [];
   for (let r = maxPrereqRow + 1; r < minPostreqRow; r++) {
     if (MathLogic.getRowSemester(r) === targetSemester) {
-      targetRow = r;
-      break;
+      validRows.push(r);
     }
   }
+
+  if (validRows.length === 0) return;
+
+  // Find the valid row closest to the unit's current year
+  const currentYear = Math.floor(node.row / 3);
+  let targetRow = validRows[0];
+  let minDiff = 999;
+
+  validRows.forEach(r => {
+    const rYear = Math.floor(r / 3);
+    const diff = Math.abs(rYear - currentYear);
+    if (diff < minDiff) {
+      minDiff = diff;
+      targetRow = r;
+    }
+  });
 
   if (targetRow !== -1 && targetRow !== node.row) {
     const newNodes = nodes.map(n => n.id === nodeId ? { ...n, row: targetRow } : n);
