@@ -193,109 +193,6 @@
       "manualColIndex": 3
     },
     {
-      "id": "M1",
-      "row": 6,
-      "title": "Minor 1",
-      "name": "Minor Unit",
-      "type": "minor",
-      "avail": [
-        1,
-        2
-      ],
-      "desc": "First unit of your chosen minor.",
-      "manualColIndex": 0
-    },
-    {
-      "id": "EGB316",
-      "row": 6,
-      "title": "EGB316",
-      "name": "Design of Machine Elements",
-      "type": "major",
-      "avail": [
-        1
-      ],
-      "desc": "Advanced design analysis using standards and Finite Element Analysis (ANSYS).",
-      "manualColIndex": 1
-    },
-    {
-      "id": "EGB321",
-      "row": 6,
-      "title": "EGB321",
-      "name": "Dynamics of Machines",
-      "type": "major",
-      "avail": [
-        1
-      ],
-      "desc": "Dynamics and vibration of machines, position/velocity analysis.",
-      "manualColIndex": 2
-    },
-    {
-      "id": "Q3Q4",
-      "row": 6,
-      "title": "QUT YOU",
-      "name": "2x 6CP Options",
-      "type": "qutyou",
-      "avail": [
-        1,
-        2,
-        3
-      ],
-      "desc": "Two 6-credit point university-wide modules.",
-      "manualColIndex": 3
-    },
-    {
-      "id": "D1",
-      "row": 7,
-      "title": "Discipline",
-      "name": "Extension Unit Option",
-      "type": "ext",
-      "avail": [
-        1,
-        2
-      ],
-      "desc": "Discipline specific extension unit.",
-      "manualColIndex": 0
-    },
-    {
-      "id": "EGH420",
-      "row": 7,
-      "title": "EGH420",
-      "name": "Mechanical Systems Design",
-      "type": "major",
-      "avail": [
-        2
-      ],
-      "desc": "Final design unit analyzing complex systems (safety, ethics, sustainability).",
-      "manualColIndex": 1
-    },
-    {
-      "id": "M2",
-      "row": 7,
-      "title": "Minor 2",
-      "name": "Minor Unit",
-      "type": "minor",
-      "avail": [
-        1,
-        2
-      ],
-      "desc": "Second unit of your chosen minor.",
-      "manualColIndex": 2
-    },
-    {
-      "id": "EGH404",
-      "row": 7,
-      "title": "EGH404",
-      "name": "Research in Eng. Practice",
-      "type": "core",
-      "avail": [
-        1,
-        2
-      ],
-      "desc": "Engineering research methods, literature review, and data visualization.",
-      "manualColIndex": 3,
-      "cpReq": 144
-    },
-    {
       "id": "M3",
       "row": 9,
       "title": "Minor 3",
@@ -411,6 +308,109 @@
       ],
       "desc": "Continuation of independent research.",
       "manualColIndex": 4
+    },
+    {
+      "id": "EGB316",
+      "row": 6,
+      "title": "EGB316",
+      "name": "Design of Machine Elements",
+      "type": "major",
+      "avail": [
+        1
+      ],
+      "desc": "Advanced design analysis using standards and Finite Element Analysis (ANSYS).",
+      "manualColIndex": 0
+    },
+    {
+      "id": "M1",
+      "row": 6,
+      "title": "Minor 1",
+      "name": "Minor Unit",
+      "type": "minor",
+      "avail": [
+        1,
+        2
+      ],
+      "desc": "First unit of your chosen minor.",
+      "manualColIndex": 1
+    },
+    {
+      "id": "EGB321",
+      "row": 6,
+      "title": "EGB321",
+      "name": "Dynamics of Machines",
+      "type": "major",
+      "avail": [
+        1
+      ],
+      "desc": "Dynamics and vibration of machines, position/velocity analysis.",
+      "manualColIndex": 2
+    },
+    {
+      "id": "Q3Q4",
+      "row": 6,
+      "title": "QUT YOU",
+      "name": "2x 6CP Options",
+      "type": "qutyou",
+      "avail": [
+        1,
+        2,
+        3
+      ],
+      "desc": "Two 6-credit point university-wide modules.",
+      "manualColIndex": 3
+    },
+    {
+      "id": "EGH420",
+      "row": 7,
+      "title": "EGH420",
+      "name": "Mechanical Systems Design",
+      "type": "major",
+      "avail": [
+        2
+      ],
+      "desc": "Final design unit analyzing complex systems (safety, ethics, sustainability).",
+      "manualColIndex": 0
+    },
+    {
+      "id": "D1",
+      "row": 7,
+      "title": "Discipline",
+      "name": "Extension Unit Option",
+      "type": "ext",
+      "avail": [
+        1,
+        2
+      ],
+      "desc": "Discipline specific extension unit.",
+      "manualColIndex": 1
+    },
+    {
+      "id": "M2",
+      "row": 7,
+      "title": "Minor 2",
+      "name": "Minor Unit",
+      "type": "minor",
+      "avail": [
+        1,
+        2
+      ],
+      "desc": "Second unit of your chosen minor.",
+      "manualColIndex": 2
+    },
+    {
+      "id": "EGH404",
+      "row": 7,
+      "title": "EGH404",
+      "name": "Research in Eng. Practice",
+      "type": "core",
+      "avail": [
+        1,
+        2
+      ],
+      "desc": "Engineering research methods, literature review, and data visualization.",
+      "manualColIndex": 3,
+      "cpReq": 144
     }
   ],
   "EDGES": [
