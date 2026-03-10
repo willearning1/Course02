@@ -82,18 +82,6 @@ const renderLegend = () => {
     `;
   }
 
-  html += `
-    <div class="h-3 w-px bg-[#DBDBDB] mx-1"></div>
-    <div class="flex items-center gap-1">
-      <div class="w-3 h-0.5 bg-slate-400"></div>
-      <span class="text-[10px] md:text-xs text-[#616161] font-medium">Pre-Req</span>
-    </div>
-    <div class="flex items-center gap-1">
-      <div class="w-3 h-0.5 border-t-2 border-dashed border-slate-400"></div>
-      <span class="text-[10px] md:text-xs text-[#616161] font-medium">Co-Req</span>
-    </div>
-  `;
-
   container.innerHTML = html;
 };
 
