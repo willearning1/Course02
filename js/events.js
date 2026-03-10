@@ -26,37 +26,131 @@ export const initEvents = () => {
     appState.set({ nodes: newNodes });
   });
 
-  // Controls (Save)
-  document.getElementById('save-btn')?.addEventListener('click', async () => {
-    const { nodes, edges } = appState.get();
+  // Controls (Export)
+  document.getElementById('export-btn')?.addEventListener('click', async () => {
+    const { nodes, edges, nodeTypes } = appState.get();
 
     // Clean up internal properties before saving
     const cleanNodes = nodes.map(({ barycenter, ...rest }) => rest);
     const cleanEdges = edges.map(({ startX, startY, endX, endY, color, edgeIdx, ...rest }) => rest);
 
-    try {
-      const response = await fetch('/save_layout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ nodes: cleanNodes, edges: cleanEdges }),
-      });
+    const exportData = {
+      NODES: cleanNodes,
+      EDGES: cleanEdges,
+      NODE_TYPES: nodeTypes
+    };
 
-      if (response.ok) {
-        alert('Layout saved successfully to data/courses.json!');
+    const jsonString = JSON.stringify(exportData, null, 2);
+
+    try {
+      if (window.showSaveFilePicker) {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: 'courses_export.json',
+          types: [{
+            description: 'JSON File',
+            accept: { 'application/json': ['.json'] },
+          }],
+        });
+        const writable = await handle.createWritable();
+        await writable.write(jsonString);
+        await writable.close();
       } else {
-        alert('Failed to save layout. Ensure you are running the custom python server (server.py) instead of standard http.server.');
+        // Fallback for browsers that don't support File System Access API
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'courses_export.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
       }
-    } catch (e) {
-      alert('Failed to save layout. Ensure you are running the custom python server (server.py) instead of standard http.server.');
-      console.error(e);
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.error('Export failed:', err);
+        alert('Failed to export layout.');
+      }
+    }
+  });
+
+  // Controls (Import)
+  document.getElementById('import-btn')?.addEventListener('click', async () => {
+    try {
+      let file;
+      if (window.showOpenFilePicker) {
+        const [handle] = await window.showOpenFilePicker({
+          types: [{
+            description: 'JSON File',
+            accept: { 'application/json': ['.json'] },
+          }],
+          multiple: false
+        });
+        file = await handle.getFile();
+      } else {
+        // Fallback
+        const fileInput = document.getElementById('file-input');
+        if (fileInput) {
+          fileInput.click();
+          fileInput.onchange = (e) => {
+             file = e.target.files[0];
+             if (file) handleFileRead(file);
+             fileInput.value = ''; // Reset the input to allow re-importing the same file
+          };
+          return;
+        }
+      }
+
+      if (file) {
+        await handleFileRead(file);
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.error('Import failed:', err);
+        alert('Failed to import layout.');
+      }
     }
   });
 
   // Setup Event Delegation for dynamic content
   setupDelegation();
   setupInfoBoxDrag();
+};
+
+const handleFileRead = async (file) => {
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+
+    if (!data.NODES || !Array.isArray(data.NODES)) {
+      throw new Error('Invalid JSON structure: Missing or invalid "NODES" array.');
+    }
+    if (!data.EDGES || !Array.isArray(data.EDGES)) {
+      throw new Error('Invalid JSON structure: Missing or invalid "EDGES" array.');
+    }
+    if (!data.NODE_TYPES || typeof data.NODE_TYPES !== 'object') {
+      throw new Error('Invalid JSON structure: Missing or invalid "NODE_TYPES" object.');
+    }
+
+    appState.set({
+      nodes: data.NODES,
+      edges: data.EDGES,
+      nodeTypes: data.NODE_TYPES,
+      completed: new Set(),
+      hoveredNode: null,
+      selectedNode: null,
+      pinnedInfoNode: null,
+      renderedInfoNode: null,
+      selectedPrereqs: [],
+      selectedUnlocks: []
+    });
+
+    UI.updateEdges();
+
+  } catch (err) {
+    console.error('Error parsing imported file:', err);
+    alert(`Import failed: ${err.message}`);
+  }
 };
 
 const setupDelegation = () => {
