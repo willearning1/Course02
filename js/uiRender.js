@@ -152,52 +152,59 @@ const renderNodes = () => {
 
   let html = '';
 
+  // Group allGridRows by year (each year has up to 3 rows)
+  const rowsByYear = {};
   allGridRows.forEach((rowNodes, rowIdx) => {
     if (rowNodes.length === 0) return;
+    const year = Math.floor(rowIdx / 3) + 1;
+    if (!rowsByYear[year]) rowsByYear[year] = [];
+    rowsByYear[year].push({ rowNodes, rowIdx });
+  });
 
-    const rowSem = MathLogic.getRowSemester(rowIdx);
-    const pref = rowPreferences[rowIdx] || rowCapacity;
-    const loadLabel = pref <= 2 ? "Part" : pref <= 4 ? "Full" : "Over";
-
-    let unlockedCP = 0;
-    let totalCP = 0;
-    rowNodes.forEach(n => {
-      const cp = n.cp !== undefined ? n.cp : 12;
-      totalCP += cp;
-      if (completed.has(n.id)) unlockedCP += cp;
-    });
-
-    let accCP = 0;
-    for (let r = 0; r <= rowIdx; r++) {
-       const rNodes = allGridRows[r] || [];
-       rNodes.forEach(n => {
-          if (completed.has(n.id)) {
-            accCP += (n.cp !== undefined ? n.cp : 12);
-          }
-       });
-    }
-    const accLabel = accCP < 192 ? "Non-Eng" : "Eng WIL";
-
+  Object.entries(rowsByYear).forEach(([year, rows]) => {
     html += `
-      <div class="flex flex-col relative">
-        <div class="absolute left-0 sm:left-[-15px] md:left-2 top-1/2 -translate-y-1/2 text-right hidden print:flex lg:flex flex-row items-center gap-2">
-    `;
-
-    if (rowSem === 1) { // Display year at the start of Sem 1 (Row 0, 3, 6...)
-      html += `
+      <div class="relative flex flex-col gap-12 sm:gap-16">
+        <!-- Year Header perfectly centered alongside its visible rows -->
+        <div class="absolute left-0 sm:left-[-15px] md:left-2 top-1/2 -translate-y-1/2 hidden print:flex lg:flex items-center justify-center">
           <span
             class="text-xs font-bold text-[#616161] tracking-widest uppercase rotate-180 absolute -left-6 whitespace-nowrap"
-            style="writing-mode: vertical-rl; top: 50%; transform: translateY(90px);"
+            style="writing-mode: vertical-rl;"
           >
-            Year ${Math.floor(rowIdx / 3) + 1}
+            Year ${year}
           </span>
-      `;
-    }
+        </div>
+    `;
 
-    html += `
-          <div class="flex flex-col items-end gap-1 ml-4" style="writing-mode: horizontal-tb;">
-            <div class="flex items-center gap-1">
-              <select
+    rows.forEach(({ rowNodes, rowIdx }) => {
+      const rowSem = MathLogic.getRowSemester(rowIdx);
+      const pref = rowPreferences[rowIdx] || rowCapacity;
+      const loadLabel = pref <= 2 ? "Part" : pref <= 4 ? "Full" : "Over";
+
+      let unlockedCP = 0;
+      let totalCP = 0;
+      rowNodes.forEach(n => {
+        const cp = n.cp !== undefined ? n.cp : 12;
+        totalCP += cp;
+        if (completed.has(n.id)) unlockedCP += cp;
+      });
+
+      let accCP = 0;
+      for (let r = 0; r <= rowIdx; r++) {
+         const rNodes = allGridRows[r] || [];
+         rNodes.forEach(n => {
+            if (completed.has(n.id)) {
+              accCP += (n.cp !== undefined ? n.cp : 12);
+            }
+         });
+      }
+      const accLabel = accCP < 192 ? "Non-Eng" : "Eng WIL";
+
+      html += `
+        <div class="flex flex-col relative">
+          <div class="absolute left-0 sm:left-[-15px] md:left-2 top-1/2 -translate-y-1/2 text-right hidden print:flex lg:flex flex-row items-center gap-2">
+            <div class="flex flex-col items-end gap-1 ml-4" style="writing-mode: horizontal-tb;">
+              <div class="flex items-center gap-1">
+                <select
                 data-action="change-row-pref"
                 data-row="${rowIdx}"
                 class="text-[10px] p-0.5 rounded border border-[#DBDBDB] bg-white text-[#616161] outline-none hover:bg-gray-50 cursor-pointer shadow-sm w-[36px] text-center"
@@ -404,6 +411,9 @@ const renderNodes = () => {
     });
 
     html += `</div></div>`;
+    }); // close rows.forEach
+    
+    html += `</div>`; // close year container
   });
 
   container.innerHTML = html;
